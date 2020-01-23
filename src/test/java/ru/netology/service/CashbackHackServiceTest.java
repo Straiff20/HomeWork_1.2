@@ -1,6 +1,9 @@
 package ru.netology.service;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,38 +14,18 @@ class CashbackHackServiceTest {
     void NothingBought() {
         CashbackHackService service = new CashbackHackService();
         int amount = 0;
-        int actual = service.remain(amount);
-        int expected = 1_000;
-        assertEquals(expected, actual);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.remain(amount);
+        });
     }
 
-    @Test
-        // один рубль
-    void OneRuble() {
+    @ParameterizedTest
+    @CsvFileSource(resources = "/Parameters.csv", numLinesToSkip = 1)
+        // перебор суммы
+    void ParameterizedSum(int amount, int expected) {
         CashbackHackService service = new CashbackHackService();
-        int amount = 1;
         int actual = service.remain(amount);
-        int expected = 999;
-        assertEquals(expected, actual);
-    }
-
-    @Test
-        //  не хватает одного рубля
-    void OneRubleMore() {
-        CashbackHackService service = new CashbackHackService();
-        int amount = 999;
-        int actual = service.remain(amount);
-        int expected = 1;
-        assertEquals(expected, actual);
-    }
-
-    @Test
-        // ровно тысяча - падает
-    void OneThousand() {
-        CashbackHackService service = new CashbackHackService();
-        int amount = 1_000;
-        int actual = service.remain(amount);
-        int expected = 0;
         assertEquals(expected, actual);
     }
 }
